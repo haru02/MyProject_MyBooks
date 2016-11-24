@@ -1,0 +1,63 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.fcteam6project.mybooks.HomeFragment"
+    android:orientation="vertical"
+    android:background="#000000"
+    android:gravity="center">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <TextView
+            android:text="책검색"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#ffffff"
+            android:id="@+id/tv_main_booksearch"
+            android:textSize="20dp"/>
+
+        <Button
+            android:text="Search Books"
+            android:padding="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_main_bookSearch"
+            android:textColor="#ffffff"
+            android:background="#ff473d"
+            android:layout_marginLeft="30dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <TextView
+            android:text="읽은 책"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#ffffff"
+            android:id="@+id/tv_main_myreadBooks"
+            android:textSize="20dp"/>
+
+        <Button
+            android:text="My Books"
+            android:padding="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_main_mybooks"
+            android:textColor="#ffffff"
+            android:background="#ffd93e"
+            android:layout_marginLeft="30dp"/>
+
+    </LinearLayout>
+
+</LinearLayout>
