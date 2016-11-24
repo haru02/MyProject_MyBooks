@@ -38,8 +38,8 @@ public class BookDetail extends AppCompatActivity {
         if(intent!=null){
             title.setText(item.getTitle());
             author.setText(item.getAuthor_t());
-            pubdate.setText(item.getPub_date());
-            pubname.setText(item.getPub_nm());
+            pubdate.setText(item.getIsbn());
+            pubname.setText(item.getIsbn13());
             description.setText(item.getDescription());
             String url = item.getCover_l_url();
             Glide.with(BookDetail.this).load(url).bitmapTransform(new CenterCrop(BookDetail.this)).into(bookcover);

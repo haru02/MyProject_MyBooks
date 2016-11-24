@@ -87,14 +87,14 @@ public class RecyclerCardAdapter extends RecyclerView.Adapter<RecyclerCardAdapte
     int lastPosition = -1;
 
     public void setAnimationCard(View view, int position){
-        TranslateAnimation animation = new TranslateAnimation(0.0f, -380.0f, 0.0f, 0.0f);
-                                       //  new TranslateAnimation(xFrom,xTo, yFrom,yTo)
-        animation.setDuration(2000);  // animation duration
+        ObjectAnimator ani = ObjectAnimator.ofFloat(view, "translationX", -210);
+        ani.setDuration(1000);
+        ani.start();
 
-        view.startAnimation(animation);  // start animation
-/*
-        ObjectAnimator ani = new ObjectAnimator();
-        ani.ofFloat(view, )*/
+        ObjectAnimator ani2 = ObjectAnimator.ofFloat(view, "translationX", 0);
+        ani2.setStartDelay(5000);
+        ani2.setDuration(1000);
+        ani2.start();
     }
 
     public void setAnimation(View view, int position){

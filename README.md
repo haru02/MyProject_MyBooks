@@ -4,3 +4,6 @@
   DAUM API 책검색 data 받아오기
 - 2016.11.23  
   Add detail Book page, main list view 
+- 2016.11.24  
+  Add barcode search
+

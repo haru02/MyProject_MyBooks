@@ -29,6 +29,7 @@ public class BookSearchList extends AppCompatActivity {
     String bookName;
     ArrayList<Item> datas = new ArrayList<Item>();
     RecyclerCardAdapter readapter;
+    String isbn13="";
 
     final String TAG = "BookSearchList";
 
@@ -56,6 +57,11 @@ public class BookSearchList extends AppCompatActivity {
         RecyclerView.LayoutManager manager = new LinearLayoutManager(BookSearchList.this);
         recyclerView.setLayoutManager(manager);
 
+        // Homefragment에서 Barcode로 입력했을 때 검색 요청하는 함수
+        if(getIntent() != null && getIntent().getExtras() != null) {
+            isbn13 = getIntent().getStringExtra("ISBN13");
+            callOpenApi(isbn13);
+        }
     }
 
     public void callOpenApi(String bookName){
@@ -108,11 +114,15 @@ public class BookSearchList extends AppCompatActivity {
                         Item itemdata = new Item();
                         JSONObject result = (JSONObject) item.get(i);
                         itemdata.setTitle(result.getString("title"));
+                        String parseTitle = result.getString("title");
+
                         itemdata.setAuthor_t(result.getString("author_t"));
                         itemdata.setDescription(result.getString("description"));
                         itemdata.setCategory(result.getString("category"));
                         itemdata.setCover_s_url(result.getString("cover_s_url"));
                         itemdata.setCover_l_url(result.getString("cover_l_url"));
+                        itemdata.setIsbn(result.getString("isbn"));
+                        itemdata.setIsbn13(result.getString("isbn13"));
                         datas.add(itemdata);
                     }
                     readapter.notifyDataSetChanged();
@@ -124,4 +134,20 @@ public class BookSearchList extends AppCompatActivity {
         }.execute();
     }
 
+    public String parseTitle(String s){
+        String result = "";
+        int idx = s.indexOf('&');
+        if(idx == -1){
+            return s;
+        }else{
+            while(idx<s.length()) {
+                StringBuilder sb = new StringBuilder();
+                String temp = s.substring(0, idx);
+                sb.append(temp);
+                temp = s.substring(idx);
+            }
+        }
+
+        return result;
+    }
 }
