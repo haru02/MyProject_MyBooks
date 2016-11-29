@@ -1,0 +1,374 @@
+[33mcommit 9bb02de59c880fab733efd9de0769b37947a8b3a[m
+Author: DESKTOP-60HU432\froze <hyojung0220.kim@gmail.com>
+Date:   Thu Nov 24 23:49:18 2016 +0900
+
+    Barcode search 추가
+
+[1mdiff --git a/.idea/modules.xml b/.idea/modules.xml[m
+[1mindex d30e707..879e42d 100644[m
+[1m--- a/.idea/modules.xml[m
+[1m+++ b/.idea/modules.xml[m
+[36m@@ -2,7 +2,7 @@[m
+ <project version="4">[m
+   <component name="ProjectModuleManager">[m
+     <modules>[m
+[31m-      <module fileurl="file://$PROJECT_DIR$/MyBooks.iml" filepath="$PROJECT_DIR$/MyBooks.iml" />[m
+[32m+[m[32m      <module fileurl="file://$PROJECT_DIR$/MyProject_MyBooks.iml" filepath="$PROJECT_DIR$/MyProject_MyBooks.iml" />[m
+       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />[m
+     </modules>[m
+   </component>[m
+[1mdiff --git a/README.md b/README.md[m
+[1mindex 58d4db4..05110bb 100644[m
+[1m--- a/README.md[m
+[1m+++ b/README.md[m
+[36m@@ -4,3 +4,6 @@[m
+   DAUM API 책검색 data 받아오기[m
+ - 2016.11.23  [m
+   Add detail Book page, main list view [m
+[32m+[m[32m- 2016.11.24[m[41m  [m
+[32m+[m[32m  Add barcode search[m
+[41m+[m
+[1mdiff --git a/app/build.gradle b/app/build.gradle[m
+[1mindex f4dfd9f..e48fd46 100644[m
+[1m--- a/app/build.gradle[m
+[1m+++ b/app/build.gradle[m
+[36m@@ -48,5 +48,8 @@[m [mdependencies {[m
+     compile 'com.android.support:recyclerview-v7:24.2.1'[m
+     compile 'com.android.support:cardview-v7:24.2.1'[m
+     compile 'com.github.bumptech.glide:glide:3.7.0'[m
+[32m+[m[32m    //Barcode scanner[m
+[32m+[m[32m    compile 'com.journeyapps:zxing-android-embedded:3.0.0@aar'[m
+[32m+[m[32m    compile 'com.google.zxing:core:3.2.0'[m
+     testCompile 'junit:junit:4.12'[m
+ }[m
+[1mdiff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml[m
+[1mindex d89bba1..c98ba5a 100644[m
+[1m--- a/app/src/main/AndroidManifest.xml[m
+[1m+++ b/app/src/main/AndroidManifest.xml[m
+[36m@@ -3,7 +3,7 @@[m
+     package="com.fcteam6project.mybooks">[m
+ [m
+     <uses-permission android:name="android.permission.INTERNET" />[m
+[31m-[m
+[32m+[m[32m    <uses-permission android:name="android.permission.CAMERA"/>[m
+ [m
+     <application[m
+         android:networkSecurityConfig="@xml/network_security_config"[m
+[1mdiff --git a/app/src/main/java/com/fcteam6project/mybooks/HomeFragment.java b/app/src/main/java/com/fcteam6project/mybooks/HomeFragment.java[m
+[1mindex e74bb7a..a01f0cb 100644[m
+[1m--- a/app/src/main/java/com/fcteam6project/mybooks/HomeFragment.java[m
+[1m+++ b/app/src/main/java/com/fcteam6project/mybooks/HomeFragment.java[m
+[36m@@ -8,8 +8,11 @@[m [mimport android.view.LayoutInflater;[m
+ import android.view.View;[m
+ import android.view.ViewGroup;[m
+ import android.widget.Button;[m
+[32m+[m[32mimport android.widget.TextView;[m
+ [m
+ import com.fcteam6project.mybooks.bookdata.BookSearchList;[m
+[32m+[m[32mimport com.google.zxing.integration.android.IntentIntegrator;[m
+[32m+[m[32mimport com.google.zxing.integration.android.IntentResult;[m
+ [m
+ [m
+ /**[m
+[36m@@ -17,6 +20,9 @@[m [mimport com.fcteam6project.mybooks.bookdata.BookSearchList;[m
+  */[m
+ public class HomeFragment extends Fragment {[m
+ [m
+[32m+[m[32m    TextView tv;[m
+[32m+[m[32m    String TAG = "HOME FRAGMENT";[m
+[32m+[m[32m    String isbnNum = "";[m
+ [m
+     public HomeFragment() {[m
+         // Required empty public constructor[m
+[36m@@ -26,9 +32,9 @@[m [mpublic class HomeFragment extends Fragment {[m
+     @Override[m
+     public View onCreateView(LayoutInflater inflater, ViewGroup container,[m
+                              Bundle savedInstanceState) {[m
+[31m-        // Inflate the layout for this fragment[m
+         View view = inflater.inflate(R.layout.fragment_home, container, false);[m
+ [m
+[32m+[m[32m        // 책 검색 기능 - 제목 입력[m
+         Button btnSearch = (Button) view.findViewById(R.id.btn_main_bookSearch);[m
+         btnSearch.setOnClickListener(new View.OnClickListener() {[m
+             @Override[m
+[36m@@ -38,15 +44,49 @@[m [mpublic class HomeFragment extends Fragment {[m
+             }[m
+         });[m
+ [m
+[32m+[m[32m        // 책 검색 기능 - 제목 입력[m
+[32m+[m[32m        Button btnSearchBarcode = (Button) view.findViewById(R.id.btn_main_bookSearchBarcode);[m
+[32m+[m[32m        btnSearchBarcode.setOnClickListener(new View.OnClickListener() {[m
+[32m+[m[32m            @Override[m
+[32m+[m[32m            public void onClick(View v) {[m
+[32m+[m[32m                new IntentIntegrator(getActivity()).initiateScan();[m
+[32m+[m[32m                IntentIntegrator integrator = new IntentIntegrator(getActivity());[m
+[32m+[m[32m                integrator.setOrientationLocked(false);[m
+[32m+[m[32m                integrator.initiateScan();[m
+[32m+[m[32m                Intent i = IntentIntegrator.forSupportFragment(HomeFragment.this).createScanIntent();[m
+[32m+[m[32m                startActivityForResult(i, IntentIntegrator.REQUEST_CODE);[m
+[32m+[m[32m            }[m
+[32m+[m[32m        });[m
+ [m
+[32m+[m[32m        //TODO[m
+         Button btnMybook = (Button) view.findViewById(R.id.btn_main_mybooks);[m
+         btnMybook.setOnClickListener(new View.OnClickListener() {[m
+             @Override[m
+             public void onClick(View v) {[m
+[31m-                [m
+[32m+[m
+             }[m
+         });[m
+[32m+[m
+[32m+[m[32m        tv = (TextView)view.findViewById(R.id.textView);[m
+[32m+[m
+         return view;[m
+     }[m
+ [m
+[32m+[m[32m    private void checkResearchType(String types){[m
+[32m+[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    // 바코드를 스캔한 결과 값을 가져온다[m
+[32m+[m[32m    @Override[m
+[32m+[m[32m    public void onActivityResult(int requestCode, int resultCode, Intent data) {[m
+[32m+[m[32m        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);[m
+[32m+[m
+[32m+[m[32m        tv.setText(result.getContents() + " [" + result.getFormatName() + "]");[m
+[32m+[m[32m        isbnNum = result.getContents();[m
+[32m+[m[32m        Intent intent = new Intent(getActivity(), BookSearchList.class);[m
+[32m+[m[32m        intent.putExtra("ISBN13", isbnNum);[m
+[32m+[m[32m        startActivity(intent);[m
+[32m+[m
+[32m+[m[32m    }[m
+[32m+[m
+ }[m
+[1mdiff --git a/app/src/main/java/com/fcteam6project/mybooks/MainActivity.java b/app/src/main/java/com/fcteam6project/mybooks/MainActivity.java[m
+[1mindex a4f9bc0..4b055bf 100644[m
+[1m--- a/app/src/main/java/com/fcteam6project/mybooks/MainActivity.java[m
+[1m+++ b/app/src/main/java/com/fcteam6project/mybooks/MainActivity.java[m
+[36m@@ -1,5 +1,11 @@[m
+ package com.fcteam6project.mybooks;[m
+ [m
+[32m+[m[32mimport android.Manifest;[m
+[32m+[m[32mimport android.annotation.TargetApi;[m
+[32m+[m[32mimport android.content.Intent;[m
+[32m+[m[32mimport android.content.pm.PackageManager;[m
+[32m+[m[32mimport android.os.Build;[m
+[32m+[m[32mimport android.support.annotation.NonNull;[m
+ import android.support.design.widget.TabLayout;[m
+ import android.support.v4.app.Fragment;[m
+ import android.support.v4.app.FragmentManager;[m
+[36m@@ -7,6 +13,9 @@[m [mimport android.support.v4.app.FragmentStatePagerAdapter;[m
+ import android.support.v4.view.ViewPager;[m
+ import android.support.v7.app.AppCompatActivity;[m
+ import android.os.Bundle;[m
+[32m+[m[32mimport android.view.View;[m
+[32m+[m[32mimport android.widget.TextView;[m
+[32m+[m
+ import com.fcteam6project.mybooks.mybooks.MyBookFragment;[m
+ import com.fcteam6project.mybooks.mybooks.TodoFragment;[m
+ [m
+[36m@@ -17,7 +26,7 @@[m [mpublic class MainActivity extends AppCompatActivity {[m
+     TodoFragment fr_todo;[m
+     ViewPager pager;[m
+ [m
+[31m-[m
+[32m+[m[32m    private final static int REQUEST_CODE = 100;[m
+     static final int FRAGMENT_COUNT = 3;[m
+ [m
+     @Override[m
+[36m@@ -25,9 +34,23 @@[m [mpublic class MainActivity extends AppCompatActivity {[m
+         super.onCreate(savedInstanceState);[m
+         setContentView(R.layout.activity_main);[m
+ [m
+[31m-        fr_home = new HomeFragment();[m
+[31m-        fr_book = new MyBookFragment();[m
+[31m-        fr_todo = new TodoFragment();[m
+[32m+[m[32m        // 권한 세팅[m
+[32m+[m[32m        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {[m
+[32m+[m[32m            fr_home = new HomeFragment();[m
+[32m+[m[32m            fr_book = new MyBookFragment();[m
+[32m+[m[32m            fr_todo = new TodoFragment();[m
+[32m+[m[32m        }else{[m
+[32m+[m[32m            checkPermissions();[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m/*        TextView signIn = (TextView)findViewById(R.id.tv_main_signin);[m
+[32m+[m[32m        signIn.setOnClickListener(new View.OnClickListener() {[m
+[32m+[m[32m            @Override[m
+[32m+[m[32m            public void onClick(View v) {[m
+[32m+[m[32m                Intent intent = new Intent(MainActivity.this, LoginActivity.class);[m
+[32m+[m[32m                startActivity(intent);[m
+[32m+[m[32m            }[m
+[32m+[m[32m        });*/[m
+ [m
+         TabLayout tablayout = (TabLayout) findViewById(R.id.tab);[m
+         tablayout.setTabGravity(TabLayout.GRAVITY_CENTER);[m
+[36m@@ -40,7 +63,31 @@[m [mpublic class MainActivity extends AppCompatActivity {[m
+         pager.setAdapter(adapter);[m
+         pager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tablayout));[m
+         tablayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(pager) );[m
+[32m+[m[32m    }[m
+ [m
+[32m+[m[32m    @TargetApi(Build.VERSION_CODES.M)[m
+[32m+[m[32m    private void checkPermissions() {[m
+[32m+[m[32m        if(checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ){[m
+[32m+[m[32m            String permissionArray[] = { Manifest.permission.CAMERA};[m
+[32m+[m[32m            requestPermissions( permissionArray , REQUEST_CODE );[m
+[32m+[m[32m        }else{[m
+[32m+[m[32m            fr_home = new HomeFragment();[m
+[32m+[m[32m            fr_book = new MyBookFragment();[m
+[32m+[m[32m            fr_todo = new TodoFragment();[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Override[m
+[32m+[m[32m    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {[m
+[32m+[m[32m        switch(requestCode) {[m
+[32m+[m[32m            case REQUEST_CODE:[m
+[32m+[m[32m                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {[m
+[32m+[m[32m                    fr_home = new HomeFragment();[m
+[32m+[m[32m                    fr_book = new MyBookFragment();[m
+[32m+[m[32m                    fr_todo = new TodoFragment();[m
+[32m+[m[32m                }[m
+[32m+[m[32m                break;[m
+[32m+[m[32m        }[m
+     }[m
+ [m
+     class PagerAdapter extends FragmentStatePagerAdapter {[m
+[1mdiff --git a/app/src/main/java/com/fcteam6project/mybooks/bookdata/BookDetail.java b/app/src/main/java/com/fcteam6project/mybooks/bookdata/BookDetail.java[m
+[1mindex 0b5c45b..1f44626 100644[m
+[1m--- a/app/src/main/java/com/fcteam6project/mybooks/bookdata/BookDetail.java[m
+[1m+++ b/app/src/main/java/com/fcteam6project/mybooks/bookdata/BookDetail.java[m
+[36m@@ -38,8 +38,8 @@[m [mpublic class BookDetail extends AppCompatActivity {[m
+         if(intent!=null){[m
+             title.setText(item.getTitle());[m
+             author.setText(item.getAuthor_t());[m
+[31m-            pubdate.setText(item.getPub_date());[m
+[31m-            pubname.setText(item.getPub_nm());[m
+[32m+[m[32m            pubdate.setText(item.getIsbn());[m
+[32m+[m[32m            pubname.setText(item.getIsbn13());[m
+             description.setText(item.getDescription());[m
+             String url = item.getCover_l_url();[m
+             Glide.with(BookDetail.this).load(url).bitmapTransform(new CenterCrop(BookDetail.this)).into(bookcover);[m
+[1mdiff --git a/app/src/main/java/com/fcteam6project/mybooks/bookdata/BookSearchList.java b/app/src/main/java/com/fcteam6project/mybooks/bookdata/BookSearchList.java[m
+[1mindex cc4b154..d8cce65 100644[m
+[1m--- a/app/src/main/java/com/fcteam6project/mybooks/bookdata/BookSearchList.java[m
+[1m+++ b/app/src/main/java/com/fcteam6project/mybooks/bookdata/BookSearchList.java[m
+[36m@@ -29,6 +29,7 @@[m [mpublic class BookSearchList extends AppCompatActivity {[m
+     String bookName;[m
+     ArrayList<Item> datas = new ArrayList<Item>();[m
+     RecyclerCardAdapter readapter;[m
+[32m+[m[32m    String isbn13="";[m
+ [m
+     final String TAG = "BookSearchList";[m
+ [m
+[36m@@ -56,6 +57,11 @@[m [mpublic class BookSearchList extends AppCompatActivity {[m
+         RecyclerView.LayoutManager manager = new LinearLayoutManager(BookSearchList.this);[m
+         recyclerView.setLayoutManager(manager);[m
+ [m
+[32m+[m[32m        // Homefragment에서 Barcode로 입력했을 때 검색 요청하는 함수[m
+[32m+[m[32m        if(getIntent() != null && getIntent().getExtras() != null) {[m
+[32m+[m[32m            isbn13 = getIntent().getStringExtra("ISBN13");[m
+[32m+[m[32m            callOpenApi(isbn13);[m
+[32m+[m[32m        }[m
+     }[m
+ [m
+     public void callOpenApi(String bookName){[m
+[36m@@ -108,11 +114,15 @@[m [mpublic class BookSearchList extends AppCompatActivity {[m
+                         Item itemdata = new Item();[m
+                         JSONObject result = (JSONObject) item.get(i);[m
+                         itemdata.setTitle(result.getString("title"));[m
+[32m+[m[32m                        String parseTitle = result.getString("title");[m
+[32m+[m
+                         itemdata.setAuthor_t(result.getString("author_t"));[m
+                         itemdata.setDescription(result.getString("description"));[m
+                         itemdata.setCategory(result.getString("category"));[m
+                         itemdata.setCover_s_url(result.getString("cover_s_url"));[m
+                         itemdata.setCover_l_url(result.getString("cover_l_url"));[m
+[32m+[m[32m                        itemdata.setIsbn(result.getString("isbn"));[m
+[32m+[m[32m                        itemdata.setIsbn13(result.getString("isbn13"));[m
+                         datas.add(itemdata);[m
+                     }[m
+                     readapter.notifyDataSetChanged();[m
+[36m@@ -124,4 +134,20 @@[m [mpublic class BookSearchList extends AppCompatActivity {[m
+         }.execute();[m
+     }[m
+ [m
+[32m+[m[32m    public String parseTitle(String s){[m
+[32m+[m[32m        String result = "";[m
+[32m+[m[32m        int idx = s.indexOf('&');[m
+[32m+[m[32m        if(idx == -1){[m
+[32m+[m[32m            return s;[m
+[32m+[m[32m        }else{[m
+[32m+[m[32m            while(idx<s.length()) {[m
+[32m+[m[32m                StringBuilder sb = new StringBuilder();[m
+[32m+[m[32m                String temp = s.substring(0, idx);[m
+[32m+[m[32m                sb.append(temp);[m
+[32m+[m[32m                temp = s.substring(idx);[m
+[32m+[m[32m            }[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        return result;[m
+[32m+[m[32m    }[m
+ }[m
+[1mdiff --git a/app/src/main/java/com/fcteam6project/mybooks/bookdata/RecyclerCardAdapter.java b/app/src/main/java/com/fcteam6project/mybooks/bookdata/RecyclerCardAdapter.java[m
+[1mindex eccbcef..2fb2e04 100644[m
+[1m--- a/app/src/main/java/com/fcteam6project/mybooks/bookdata/RecyclerCardAdapter.java[m
+[1m+++ b/app/src/main/java/com/fcteam6project/mybooks/bookdata/RecyclerCardAdapter.java[m
+[36m@@ -87,14 +87,14 @@[m [mpublic class RecyclerCardAdapter extends RecyclerView.Adapter<RecyclerCardAdapte[m
+     int lastPosition = -1;[m
+ [m
+     public void setAnimationCard(View view, int position){[m
+[31m-        TranslateAnimation animation = new TranslateAnimation(0.0f, -380.0f, 0.0f, 0.0f);[m
+[31m-                                       //  new TranslateAnimation(xFrom,xTo, yFrom,yTo)[m
+[31m-        animation.setDuration(2000);  // animation duration[m
+[31m-[m
+[31m-        view.startAnimation(animation);  // start animation[m
+[31m-/*[m
+[31m-        ObjectAnimator ani = new ObjectAnimator();[m
+[31m-        ani.ofFloat(view, )*/[m
+[32m+[m[32m        ObjectAnimator ani = ObjectAnimator.ofFloat(view, "translationX", -210);[m
+[32m+[m[32m        ani.setDuration(1000);[m
+[32m+[m[32m        ani.start();[m
+[32m+[m
+[32m+[m[32m        ObjectAnimator ani2 = ObjectAnimator.ofFloat(view, "translationX", 0);[m
+[32m+[m[32m        ani2.setStartDelay(5000);[m
+[32m+[m[32m        ani2.setDuration(1000);[m
+[32m+[m[32m        ani2.start();[m
+     }[m
+ [m
+     public void setAnimation(View view, int position){[m
+[1mdiff --git a/app/src/main/res/layout/fragment_home.xml b/app/src/main/res/layout/fragment_home.xml[m
+[1mindex 132faad..9f17d22 100644[m
+[1m--- a/app/src/main/res/layout/fragment_home.xml[m
+[1m+++ b/app/src/main/res/layout/fragment_home.xml[m
+[36m@@ -31,6 +31,16 @@[m
+             android:background="#ff473d"[m
+             android:layout_marginLeft="30dp"/>[m
+ [m
+[32m+[m[32m        <Button[m
+[32m+[m[32m            android:text="Barcode"[m
+[32m+[m[32m            android:padding="10dp"[m
+[32m+[m[32m            android:layout_width="wrap_content"[m
+[32m+[m[32m            android:layout_height="wrap_content"[m
+[32m+[m[32m            android:id="@+id/btn_main_bookSearchBarcode"[m
+[32m+[m[32m            android:textColor="#ffffff"[m
+[32m+[m[32m            android:background="#ff473d"[m
+[32m+[m[32m            android:layout_marginLeft="30dp"/>[m
+[32m+[m
+     </LinearLayout>[m
+ [m
+     <LinearLayout[m
+[36m@@ -60,4 +70,11 @@[m
+ [m
+     </LinearLayout>[m
+ [m
+[32m+[m[32m    <TextView[m
+[32m+[m[32m        android:text="TextView"[m
+[32m+[m[32m        android:layout_width="match_parent"[m
+[32m+[m[32m        android:layout_height="wrap_content"[m
+[32m+[m[32m        android:id="@+id/textView"[m
+[32m+[m[32m        android:textColor="#ffffff"/>[m
+[32m+[m
+ </LinearLayout>[m

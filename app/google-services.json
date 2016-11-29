@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "881271810402",
+    "firebase_url": "https://hyojungbooks.firebaseio.com",
+    "project_id": "hyojungbooks",
+    "storage_bucket": "hyojungbooks.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:881271810402:android:23db9677b1e7c892",
+        "android_client_info": {
+          "package_name": "com.fcteam6project.mybooks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "881271810402-dkgmea7ognlf1l1j9k5ocsmdco1r8075.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJWZ8ju-pg0nSAeilC7EZRX3BD5T5Q3eg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
