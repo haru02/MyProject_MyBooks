@@ -1,34 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ScrollView01"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_book_search_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:scrollbars="none" >
+    android:background="#000000"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.fcteam6project.mybooks.bookdata.BookSearchList">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/activity_book_search_list"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#000000"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        tools:context="com.fcteam6project.mybooks.bookdata.BookSearchList">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:id="@+id/ll_booksearchlist">
 
         <EditText
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:id="@+id/et_booksearchlist_booktitle"
             android:textColor="#ffffff"
-            android:layout_marginTop="20dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:hint="Research Book Name"
-            android:textColorHint="@android:color/holo_orange_light" />
+            android:textColorHint="@android:color/holo_orange_light"
+            android:layout_weight="1"
+            android:layout_gravity="left" />
 
         <Button
             android:text="검색"
@@ -36,18 +37,19 @@
             android:layout_height="wrap_content"
             android:id="@+id/btn_booksearchlist_Save"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:layout_weight="1"
+            style="@style/Widget.AppCompat.Button.Colored" />
+    </LinearLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/recyclerCardView"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/et_booksearchlist_booktitle"
-            >
-        </android.support.v7.widget.RecyclerView>
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/recyclerCardView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/ll_booksearchlist">
 
-    </RelativeLayout>
+    </android.support.v7.widget.RecyclerView>
 
-</ScrollView>
+</RelativeLayout>

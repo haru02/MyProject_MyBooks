@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.fcteam6project.mybooks.R;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -64,7 +65,7 @@ public class BookSearchList extends AppCompatActivity {
         }
     }
 
-    public void callOpenApi(String bookName){
+    public void callOpenApi(final String bookName){
         new AsyncTask<Void, Void, String>(){
             ProgressDialog progress;
 
@@ -113,15 +114,14 @@ public class BookSearchList extends AppCompatActivity {
                     for (int i = 0; i < rows_count; i++) {
                         Item itemdata = new Item();
                         JSONObject result = (JSONObject) item.get(i);
-                        itemdata.setTitle(result.getString("title"));
-                        String parseTitle = result.getString("title");
-
+                        String parseTitle = StringEscapeUtils.unescapeHtml4(result.getString("title"));
+                        parseTitle = StringEscapeUtils.unescapeXml(parseTitle);
+                        itemdata.setTitle(parseTitle);
                         itemdata.setAuthor_t(result.getString("author_t"));
                         itemdata.setDescription(result.getString("description"));
                         itemdata.setCategory(result.getString("category"));
                         itemdata.setCover_s_url(result.getString("cover_s_url"));
                         itemdata.setCover_l_url(result.getString("cover_l_url"));
-                        itemdata.setIsbn(result.getString("isbn"));
                         itemdata.setIsbn13(result.getString("isbn13"));
                         datas.add(itemdata);
                     }

@@ -1,4 +1,4 @@
-package com.fcteam6project.mybooks.bookdata;
+package com.fcteam6project.mybooks.mybooks;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -21,7 +20,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.fcteam6project.mybooks.MainActivity;
 import com.fcteam6project.mybooks.R;
+import com.fcteam6project.mybooks.bookdata.BookDetail;
+import com.fcteam6project.mybooks.bookdata.Item;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -31,18 +33,19 @@ import java.util.ArrayList;
  * Created by froze on 2016-11-13.
  */
 
-public class RecyclerCardAdapter extends RecyclerView.Adapter<RecyclerCardAdapter.ViewHolder>{
+public class RecyclerCardAdapter_Mybook extends RecyclerView.Adapter<RecyclerCardAdapter_Mybook.ViewHolder>{
 
     String TAG = "RecylerApapter";
     ArrayList<Item> datas = new ArrayList<>();
     int itemLayout;
     Context context;
     Item data;
+    int mposition=0;
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myFavBook = database.getReference("user1").child("favorite");
 
-    public RecyclerCardAdapter(ArrayList<Item> datas, int itemLayout, Context context){
+    public RecyclerCardAdapter_Mybook(ArrayList<Item> datas, int itemLayout, Context context){
         this.datas = datas;
         this.itemLayout = itemLayout;
         this.context = context;
@@ -57,7 +60,8 @@ public class RecyclerCardAdapter extends RecyclerView.Adapter<RecyclerCardAdapte
 
     // listView getView 를 대체하는 함수
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        mposition = position;
         data = datas.get(position);
         holder.tvTitle.setText(data.getTitle());
         holder.tvAuthor.setText(data.getAuthor_t());
@@ -66,14 +70,12 @@ public class RecyclerCardAdapter extends RecyclerView.Adapter<RecyclerCardAdapte
         String url = data.getCover_s_url();
         Glide.with(context).load(url).bitmapTransform(new CenterCrop(context)).into(holder.ivBookCover);
 
-
-
         // 카드를 클릭하면 카드가 이동하면서 detail 버튼, favorite 버튼을 보여준다
         holder.rlayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 holder.cardView.setCardBackgroundColor(Color.YELLOW);
-                setAnimationCard(holder.cardView, position);
+                setAnimationCard(holder.cardView, mposition);
 
                 holder.btnUnFavorite.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -97,11 +99,12 @@ public class RecyclerCardAdapter extends RecyclerView.Adapter<RecyclerCardAdapte
                 holder.tvdetail.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(context, BookDetail.class);
+                        Intent intent = new Intent(v.getContext(), BookDetail.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("position", data);
                         intent.putExtras(bundle);
-                        context.startActivity(intent);
+                        v.getContext().startActivity(intent);
                     }
                 });
             }

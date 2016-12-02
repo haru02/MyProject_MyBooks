@@ -3,6 +3,7 @@ package com.fcteam6project.mybooks.bookdata;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,9 +37,9 @@ public class BookDetail extends AppCompatActivity {
         Item item = (Item)intent.getExtras().get("position");
 
         if(intent!=null){
-            title.setText(item.getTitle());
+            title.setText(Html.fromHtml(item.getTitle()));
             author.setText(item.getAuthor_t());
-            pubdate.setText(item.getIsbn());
+            pubdate.setText(item.getPub_date());
             pubname.setText(item.getIsbn13());
             description.setText(item.getDescription());
             String url = item.getCover_l_url();

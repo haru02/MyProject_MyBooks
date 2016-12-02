@@ -32,11 +32,11 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginLeft="15dp"
-                android:gravity="start"/>
+                android:gravity="start" />
 
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_margin="20dp"
+                android:layout_margin="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
@@ -49,11 +49,11 @@
                     android:text="title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="20dp"
                     android:id="@+id/tv_research_title"
                     android:textColor="#000000"
-                    android:textSize="20dp"
-                    android:layout_weight="3" />
+                    android:textSize="15dp"
+                    android:layout_weight="4" />
 
                 <TextView
                     android:text="author"
@@ -62,10 +62,10 @@
                     android:id="@+id/tv_research_author"
                     android:layout_marginLeft="20dp"
                     android:textColor="#000000"
-                    android:textSize="13dp"
+                    android:textSize="10dp"
                     android:layout_weight="1" />
 
-                    </LinearLayout>
+            </LinearLayout>
 
 
 
@@ -76,11 +76,33 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/favorite"
+        android:background="@drawable/ic_star_border_black_24dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_marginTop="35dp"
         android:layout_marginRight="20dp"
-        android:id="@+id/imgBtn_research_favorite" />
+        android:id="@+id/imgBtn_research_unfavorite" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_star_yellow_24dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="35dp"
+        android:layout_marginRight="20dp"
+        android:id="@+id/imgBtn_research_favorite"
+        android:visibility="invisible" />
+
+    <TextView
+        android:text="Detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/imgBtn_research_unfavorite"
+        android:layout_alignEnd="@+id/imgBtn_research_unfavorite"
+        android:textColor="#ffffff"
+        android:layout_marginTop="80dp"
+        android:id="@+id/tv_maincardview_todetail" />
 
 </RelativeLayout>

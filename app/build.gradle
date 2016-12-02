@@ -10,15 +10,15 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        jackOptions {
+/*        jackOptions {
             enabled true
-        }
+        }*/
     }
-    //java8 사용 설정 2
+/*    //java8 사용 설정 2
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
+    }*/
     buildTypes {
         release {
             minifyEnabled false
@@ -40,16 +40,22 @@ dependencies {
 
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:support-v4:24.2.1'
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:support-v4:24.2.1'
     compile 'com.android.support:design:24.2.1'
     compile 'io.reactivex:rxjava:1.1.6'
-    compile 'com.jakewharton.rxbinding:rxbinding:0.4.0'
+
     compile 'com.android.support:recyclerview-v7:24.2.1'
     compile 'com.android.support:cardview-v7:24.2.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     //Barcode scanner
     compile 'com.journeyapps:zxing-android-embedded:3.0.0@aar'
     compile 'com.google.zxing:core:3.2.0'
+    //firebase
+    compile 'com.google.firebase:firebase-core:9.6.1'
+    compile 'com.google.firebase:firebase-database:9.6.1'
+    //escape html
+    compile 'org.apache.commons:commons-lang3:3.4'
+
     testCompile 'junit:junit:4.12'
 }
+
+apply plugin: 'com.google.gms.google-services'
